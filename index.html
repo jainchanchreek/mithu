@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>For Mithu 💕</title>
+    <style>
+        :root {
+            --sky-blue: #a5d8ff;
+            --grass-green: #74c365;
+            --ui-white: rgba(255, 255, 255, 0.9);
+            --pixel-black: #212529;
+            --boy-color: #4dabf7;
+            --girl-color: #ff8787;
+            --heart-red: #ff3e3e;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Courier New', Courier, monospace; /* Pixel-y feel */
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: var(--sky-blue);
+        }
+
+        /* --- WORLD --- */
+        #game-world {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .grass {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 20%;
+            background-color: var(--grass-green);
+            border-top: 4px solid #5da150;
+        }
+
+        .cloud {
+            position: absolute;
+            background: white;
+            width: 60px;
+            height: 20px;
+            border-radius: 10px;
+            opacity: 0.8;
+            animation: float linear infinite;
+        }
+
+        @keyframes float {
+            from { transform: translateX(110vw); }
+            to { transform: translateX(-20vw); }
+        }
+
+        /* --- PIXEL CHARACTERS --- */
+        .stage {
+            position: relative;
+            display: flex;
+            gap: 40px;
+            margin-bottom: 100px;
+            z-index: 2;
+        }
+
+        .pixel-char {
+            width: 40px;
+            height: 60px;
+            position: relative;
+            animation: idle 1s ease-in-out infinite alternate;
+        }
+
+        /* CSS Drawing of tiny pixel people */
+        .pixel-char::before {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            box-shadow: 
+                15px 0 var(--pixel-black), 25px 0 var(--pixel-black), /* Eyes */
+                10px 10px var(--skin), 20px 10px var(--skin), 30px 10px var(--skin), /* Face */
+                10px 20px var(--shirt), 20px 20px var(--shirt), 30px 20px var(--shirt), /* Body */
+                10px 30px var(--shirt), 20px 30px var(--shirt), 30px 30px var(--shirt),
+                10px 40px var(--pixel-black), 30px 40px var(--pixel-black); /* Legs */
+        }
+
+        .boy { --shirt: var(--boy-color); --skin: #ffdbac; }
+        .girl { --shirt: var(--girl-color); --skin: #f1c27d; }
+
+        @keyframes idle {
+            from { transform: translateY(0); }
+            to { transform: translateY(-5px); }
+        }
+
+        .heart {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.3); }
+            100% { transform: translateX(-50%) scale(1); }
+        }
+
+        /* --- UI CARD --- */
+        .ui-card {
+            position: absolute;
+            bottom: 40px;
+            width: 90%;
+            max-width: 400px;
+            background: var(--ui-white);
+            border: 4px solid var(--pixel-black);
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            z-index: 10;
+        }
+
+        .text-box {
+            font-size: 1.1rem;
+            color: var(--pixel-black);
+            margin-bottom: 20px;
+            min-height: 60px;
+            line-height: 1.4;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: 3px solid var(--pixel-black);
+            background: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        button:active { transform: scale(0.95); }
+
+        .btn-next { background: #fff3bf; }
+        .btn-yes { background: #b2f2bb; }
+        .btn-no { background: #ffc9c9; position: relative; }
+
+        /* --- CELEBRATION --- */
+        .confetti {
+            position: absolute;
+            bottom: 0;
+            color: var(--heart-red);
+            font-size: 20px;
+            animation: rise 3s forwards;
+            z-index: 1;
+        }
+
+        @keyframes rise {
+            to { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="game-world">
+        <div class="cloud" style="top: 10%; animation-duration: 25s;"></div>
+        <div class="cloud" style="top: 25%; animation-duration: 35s; animation-delay: -10s;"></div>
+        
+        <div class="stage">
+            <div class="heart">❤️</div>
+            <div class="pixel-char boy"></div>
+            <div class="pixel-char girl"></div>
+        </div>
+
+        <div class="grass"></div>
+
+        <div class="ui-card">
+            <div id="text-content" class="text-box">
+                Hey Mithu 💕<br>I built a tiny world… just for us.
+            </div>
+            
+            <div class="btn-container" id="controls">
+                <button class="btn-next" onclick="nextStep()">Next ✨</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 0;
+        const story = [
+            { text: "This is us.<br>Two little pixels, always finding each other.", btn: "Next ✨" },
+            { text: "Every step.<br>I want to keep walking with you.", btn: "Next ✨" },
+            { text: "So Mithu…<br>I have something important to ask.", btn: "Wait, what?" },
+            { text: "Will you be my Valentine? ❤️", isFinal: true }
+        ];
+
+        const textEl = document.getElementById('text-content');
+        const controlsEl = document.getElementById('controls');
+
+        function nextStep() {
+            if (currentStep < story.length) {
+                const step = story[currentStep];
+                textEl.innerHTML = step.text;
+                
+                if (step.isFinal) {
+                    showFinalControls();
+                } else {
+                    controlsEl.innerHTML = `<button class="btn-next" onclick="nextStep()">${step.btn}</button>`;
+                }
+                currentStep++;
+            }
+        }
+
+        function showFinalControls() {
+            controlsEl.innerHTML = `
+                <button class="btn-yes" onclick="celebrate()">Yes 💖</button>
+                <button class="btn-no" id="no-btn" onmouseover="moveNo()" onclick="moveNo()">No 🙈</button>
+            `;
+        }
+
+        function moveNo() {
+            const btn = document.getElementById('no-btn');
+            const funnyTexts = ["Try again 😏", "Almost 😜", "You know the answer 💕", "Nice try! 🌸"];
+            btn.innerText = funnyTexts[Math.floor(Math.random() * funnyTexts.length)];
+            
+            const x = Math.random() * (window.innerWidth - 100) - (window.innerWidth / 2) + 50;
+            const y = Math.random() * -200 - 50; // Move it upwards randomly
+            btn.style.transform = `translate(${x}px, ${y}px)`;
+        }
+
+        function celebrate() {
+            textEl.innerHTML = "<strong>YAY 💘</strong><br>You just made this world brighter ✨";
+            controlsEl.innerHTML = "";
+            
+            // Spawn floating hearts
+            for(let i=0; i<30; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'confetti';
+                    heart.innerHTML = '❤️';
+                    heart.style.left = Math.random() * 100 + 'vw';
+                    heart.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                    document.body.appendChild(heart);
+                }, i * 100);
+            }
+        }
+    </script>
+</body>
+</html>
